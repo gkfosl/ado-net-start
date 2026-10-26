@@ -13,10 +13,10 @@ await using var dataSource = NpgsqlDataSource.Create(connectionString);
 await using var connection = await dataSource.OpenConnectionAsync();
 
 // Текст поиска вклеивается прямо в SQL.
-string sql = $"SELECT id, name, price FROM products WHERE name ILIKE '%{text}%' ORDER BY id";
-Console.WriteLine($"SQL: {sql}");
-
+string sql = "SELECT id, name, price FROM products WHERE name ILIKE @pattern ORDER BY id";
 await using var command = new NpgsqlCommand(sql, connection);
+command.Parameters.AddWithValue("pattern", "%" + text + "%");
+
 await using var reader = await command.ExecuteReaderAsync();
 
 int count = 0;
